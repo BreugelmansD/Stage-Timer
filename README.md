@@ -24,10 +24,9 @@ Je hebt dan **geen Node.js** nodig.
 
 ### Installeren
 
-1. Download `Stage-Timer-mac.dmg`: op GitHub onder **Actions → Mac-app bouwen** → de laatste run →
-   *Artifacts* (of onder **Releases** als er een versie uitgebracht is). Je kunt de app ook zelf
-   bouwen, zie [Bouwen](#bouwen).
-2. Open de .dmg en sleep **Stage Timer** naar **Apps**.
+1. Neem `Stage-Timer-mac.dmg` (zelf gebouwd, zie [Bouwen](#bouwen), of gekregen van een collega).
+2. Open de .dmg en sleep **Stage Timer** naar **Apps**. Een nieuwere versie installeer je op dezelfde
+   manier (kies *Vervang*); je timers en instellingen blijven bewaard.
 3. De eerste keer openen: de app is niet bij Apple geregistreerd, dus macOS waarschuwt.
    - Rechtsklik op Stage Timer in Apps → **Open** → **Open**, of
    - (macOS 15 en nieuwer) probeer te openen, ga naar **Systeeminstellingen → Privacy en beveiliging**
@@ -51,15 +50,16 @@ Je hebt dan **geen Node.js** nodig.
 
 ### Bouwen
 
-De .dmg wordt gebouwd door GitHub Actions op een Mac (workflow `.github/workflows/mac-app.yml`):
+Bouwen gebeurt op een Mac, zonder online dienst:
 
-- **Handmatig:** tabblad **Actions → Mac-app bouwen → Run workflow**. De .dmg staat daarna bij de run
-  onder *Artifacts* (30 dagen bewaard).
-- **Als release:** verhoog `version` in `package.json`, maak een tag (bv. `git tag v1.1.0 && git push --tags`);
-  de .dmg komt dan bij **Releases**.
+1. Installeer [Node.js](https://nodejs.org) (LTS) op de Mac (eenmalig).
+2. Dubbelklik in de map van de app op **`build-mac.command`**.
+   De eerste keer: rechtsklik → **Open** (macOS vraagt bevestiging voor scripts).
+3. Na een paar minuten opent Finder met **`dist/Stage-Timer-mac.dmg`**. Die kun je op een USB-stick
+   zetten of doorsturen naar collega's.
 
-Op een Mac met [Node.js](https://nodejs.org), in de map van de app: `npm install` en daarna `npm run dist:mac`.
-De app staat dan in `dist/mac-universal/Stage Timer.app`; sleep hem naar Apps.
+In Terminal kan het ook: `npm ci` en daarna `npm run dist:mac` (dan staat de app in
+`dist/mac-universal/`).
 
 Lokaal testen zonder te bouwen: `npm install` en `npm run app`.
 
@@ -133,7 +133,7 @@ Heb je geen netwerk, dan kun je het scherm en de bediening ook allebei op de hos
 
 ### Updaten
 
-Haal je de app van GitHub met git, dan volstaat in de map van de app:
+Werk je met de broncode (git), dan volstaat in de map van de app:
 
 ```bash
 git pull
@@ -246,6 +246,7 @@ public/control.*       bedieningspagina
 public/display.*       schermpagina
 public/brand/          logo, favicon en Montserrat (huisstijl)
 electron/              Mac-app (venster, menu, instellingen)
+build-mac.command      Mac-app bouwen (dubbelklikken op een Mac)
 build/icon.png         app-icoon
 ```
 
