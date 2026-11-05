@@ -3,12 +3,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Stage Timer – Bediening</title>
+  <title>Stage Timer – Bediening | BLUE MOON</title>
+  <link rel="icon" type="image/png" href="brand/favicon.png" />
+  <link rel="apple-touch-icon" href="brand/apple-touch-icon.png" />
+  <meta name="theme-color" content="#004255" />
+  <link rel="stylesheet" href="brand/fonts.css" />
   <link rel="stylesheet" href="control.css" />
 </head>
 <body>
   <header class="appbar">
-    <div class="brand"><span class="logo">⏱</span> Stage Timer</div>
+    <div class="brand"><img src="brand/logo-white.png" alt="BLUE MOON" /><span class="app-name">Stage Timer</span></div>
     <span id="connStatus" class="pill off">Verbinden…</span>
     <div class="spacer"></div>
     <button id="btnHelp" class="ghost" title="Uitleg over de app">❓ Help</button>
@@ -102,6 +106,7 @@
             <legend>Klok</legend>
             <label>Lettertype
               <select name="fontFamily">
+                <option value='Montserrat, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif'>Montserrat (BLUE MOON)</option>
                 <option value='system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif'>Systeem (sans-serif)</option>
                 <option value='"Helvetica Neue", Helvetica, Arial, sans-serif'>Helvetica / Arial</option>
                 <option value='"DIN Alternate", "Bahnschrift", "Arial Narrow", sans-serif'>DIN / Bahnschrift</option>
@@ -154,6 +159,7 @@
             <label class="check"><input type="checkbox" name="showNotes" /> Notities van de timer</label>
             <label class="check"><input type="checkbox" name="showOvertime" /> Overtijd tonen (negatief verder tellen)</label>
             <label class="check"><input type="checkbox" name="overtimeFlash" /> Knipperen bij overtijd</label>
+            <label class="check"><input type="checkbox" name="showLogo" /> BLUE MOON-logo</label>
             <label class="check"><input type="checkbox" name="mirror" /> Spiegelen (voor reflectie/teleprompter)</label>
           </fieldset>
           <fieldset>

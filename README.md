@@ -1,4 +1,4 @@
-# Stage Timer
+# Stage Timer · BLUE MOON
 
 Een stage timer die je via het netwerk bedient. De **host** (de computer die het scherm uitstuurt
 naar een monitor of projector) draait een kleine server. Vanaf elke andere computer, tablet of
@@ -46,17 +46,62 @@ Je kunt zoveel schermen en bedieningen openen als je wilt; ze tonen allemaal het
 > **Windows-firewall:** de eerste keer vraagt Windows of Node.js toegang mag krijgen tot het netwerk.
 > Kies *Toestaan* voor privénetwerken, anders kunnen andere computers niet verbinden.
 
-### Opties
+### Poort en andere opties
 
-| Omgevingsvariabele | Standaard | Betekenis |
-| --- | --- | --- |
-| `PORT` | `3000` | Poort van de server |
-| `HOST` | `0.0.0.0` | Luisteradres (`127.0.0.1` = enkel deze computer) |
-| `STAGE_TIMER_PIN` | – | Pincode die nodig is om te bedienen (het scherm blijft vrij te bekijken) |
-| `DATA_DIR` | `./data` | Map waarin de toestand bewaard wordt |
+Standaard draait de app op poort **3000**. Een andere poort kies je zo:
 
-Voorbeeld: `STAGE_TIMER_PIN=4321 PORT=8080 node server.js`
-(Windows PowerShell: `$env:STAGE_TIMER_PIN="4321"; node server.js`)
+| Hoe | Voorbeeld |
+| --- | --- |
+| Startbestand | Open `start-windows.bat` of `start-mac.command` in een teksteditor en pas `PORT=3000` bovenaan aan |
+| Kort | `node server.js 8080` |
+| Met opties | `node server.js --port 8080 --pin 4321` |
+
+Alle opties (als argument of als omgevingsvariabele):
+
+| Argument | Omgevingsvariabele | Standaard | Betekenis |
+| --- | --- | --- | --- |
+| `--port` | `PORT` | `3000` | Poort van de server |
+| `--host` | `HOST` | `0.0.0.0` | Luisteradres (`127.0.0.1` = enkel deze computer) |
+| `--pin` | `STAGE_TIMER_PIN` | – | Pincode die nodig is om te bedienen (het scherm blijft vrij te bekijken) |
+| `--data` | `DATA_DIR` | `./data` | Map waarin de toestand bewaard wordt |
+
+Is de poort al in gebruik, dan zegt de app dat en stelt een andere voor.
+Meerdere timers op één laptop (bv. twee zalen)? Start de app twee keer met een andere poort én datamap:
+`node server.js 3000` en `node server.js 3001 --data ./data-zaal2`.
+
+### Zonder internet / zonder wifi
+
+De app heeft **geen internet nodig**: alles (ook het lettertype en het logo) zit in de app zelf.
+Er is wel een lokaal netwerk nodig tussen de host en de bediening. Dat kan op verschillende manieren:
+
+- **Netwerkkabel via een switch of router.** Werkt zonder wifi en zonder internet.
+- **Rechtstreekse netwerkkabel** tussen twee laptops. Na een halve minuut krijgen beide een adres in de
+  vorm `169.254.x.x`; de host toont dat adres bij het opstarten en onder **🌐 Netwerk**.
+- **Eigen (reis)router**, met of zonder wifi. Aanrader op events: gastennetwerken laten toestellen vaak
+  niet met elkaar praten.
+- **Hotspot** van de host-laptop.
+
+Heb je geen netwerk, dan kun je het scherm en de bediening ook allebei op de host-laptop openen
+(bv. de bediening op het laptopscherm en het scherm op de projector).
+
+### Updaten
+
+Haal je de app van GitHub met git, dan volstaat in de map van de app:
+
+```bash
+git pull
+```
+
+en de app opnieuw starten. Je timers en instellingen (map `data/`) blijven bewaard.
+Een opgeslagen weergave blijft zoals ze was; klik onder **Weergave** op *Standaardweergave herstellen*
+om de nieuwe standaardstijl te krijgen.
+
+### Huisstijl
+
+De bediening gebruikt de BLUE MOON-huisstijl (petrolblauw `#004255`, Montserrat, logo). Op het scherm
+is Montserrat de standaardletter en kun je het logo aanzetten onder **Weergave → BLUE MOON-logo**.
+Logo en lettertype staan in `public/brand/`; Montserrat valt onder de SIL Open Font License
+(`public/brand/fonts/OFL.txt`).
 
 ## Bediening
 
@@ -152,6 +197,7 @@ public/shared.js       tijd parsen/formatteren en timerberekening (server + brow
 public/client.js       verbinding met de server en kloksynchronisatie
 public/control.*       bedieningspagina
 public/display.*       schermpagina
+public/brand/          logo, favicon en Montserrat (huisstijl)
 ```
 
 De server is de enige bron van waarheid. Elke browser ontvangt de volledige toestand via

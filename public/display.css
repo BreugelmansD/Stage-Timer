@@ -8,7 +8,7 @@
   --weight: 700;
   --title-size: 4vw;
   --msg-color: #fff;
-  --msg-bg: #1f4fd1;
+  --msg-bg: #004255;
   --msg-size: 6vw;
 }
 * { box-sizing: border-box; }
@@ -40,6 +40,12 @@ body.color-bg #stage { background: var(--phase-bg, var(--bg)); }
   gap: 2vw;
   padding: 2vh 3vw 0;
   min-height: 0;
+}
+#logo {
+  height: calc(var(--title-size) * .75);
+  width: auto;
+  margin-top: calc(var(--title-size) * .2);
+  flex: none;
 }
 #title {
   font-size: var(--title-size);
@@ -159,9 +165,9 @@ body.preview #conn, body.preview #hint { display: none !important; }
   left: 50%;
   bottom: 3vh;
   transform: translateX(-50%);
-  background: rgba(40,40,40,.85);
+  background: rgba(0,66,85,.92);
   color: #fff;
-  font: 14px system-ui, sans-serif;
+  font: 500 14px Montserrat, system-ui, sans-serif;
   padding: 8px 14px;
   border-radius: 6px;
   z-index: 70;

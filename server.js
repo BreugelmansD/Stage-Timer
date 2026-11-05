@@ -3,11 +3,12 @@
  * Stage Timer — server
  *
  * Start met:  node server.js
- * Opties (omgevingsvariabelen):
- *   PORT=3000              poort
- *   HOST=0.0.0.0           luister-adres (0.0.0.0 = bereikbaar op het netwerk)
- *   STAGE_TIMER_PIN=1234   optionele pincode voor de bediening
- *   DATA_DIR=./data        waar de toestand bewaard wordt
+ * Opties (als argument of als omgevingsvariabele):
+ *   --port 3000      / PORT=3000             poort
+ *   --host 0.0.0.0   / HOST=0.0.0.0          luister-adres (0.0.0.0 = bereikbaar op het netwerk)
+ *   --pin 1234       / STAGE_TIMER_PIN=1234  optionele pincode voor de bediening
+ *   --data ./data    / DATA_DIR=./data       waar de toestand bewaard wordt
+ * Kort: "node server.js 8080" start op poort 8080.
  */
 const http = require('http');
 const fs = require('fs');
@@ -17,10 +18,40 @@ const crypto = require('crypto');
 const shared = require('./public/shared.js');
 const { parseScript } = require('./lib/script-parser');
 
-const PORT = Number(process.env.PORT) || 3000;
-const HOST = process.env.HOST || '0.0.0.0';
-const PIN = process.env.STAGE_TIMER_PIN || '';
-const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data');
+function parseArgs(argv) {
+  const out = {};
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i];
+    if (/^\d+$/.test(arg)) {
+      out.port = arg;
+      continue;
+    }
+    const m = /^--?([a-z-]+)(?:=(.*))?$/i.exec(arg);
+    if (!m) continue;
+    const key = m[1].toLowerCase();
+    let value = m[2];
+    if (value === undefined && argv[i + 1] != null && !argv[i + 1].startsWith('-')) value = argv[++i];
+    if (key === 'help' || key === 'h') out.help = true;
+    else out[key] = value ?? '';
+  }
+  return out;
+}
+
+const ARGS = parseArgs(process.argv.slice(2));
+if (ARGS.help) {
+  console.log(`Gebruik: node server.js [poort] [--port 3000] [--host 0.0.0.0] [--pin 1234] [--data ./data]`);
+  process.exit(0);
+}
+
+const PORT_INPUT = ARGS.port || process.env.PORT || '3000';
+const PORT = Number(PORT_INPUT);
+if (!Number.isInteger(PORT) || PORT < 1 || PORT > 65535) {
+  console.error(`Ongeldige poort: ${PORT_INPUT}. Kies een getal tussen 1 en 65535 (bv. 3000 of 8080).`);
+  process.exit(1);
+}
+const HOST = ARGS.host || process.env.HOST || '0.0.0.0';
+const PIN = ARGS.pin || process.env.STAGE_TIMER_PIN || '';
+const DATA_DIR = path.resolve(ARGS.data || process.env.DATA_DIR || path.join(__dirname, 'data'));
 const STATE_FILE = path.join(DATA_DIR, 'state.json');
 const PUBLIC_DIR = path.join(__dirname, 'public');
 const MAX_BODY = 25 * 1024 * 1024;
@@ -28,7 +59,7 @@ const MAX_BODY = 25 * 1024 * 1024;
 // ------------------------------------------------------------------ state
 
 const DEFAULT_SETTINGS = {
-  fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif',
+  fontFamily: 'Montserrat, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif',
   customFont: '',
   fontWeight: 700,
   timerSize: 24,
@@ -38,7 +69,7 @@ const DEFAULT_SETTINGS = {
   dangerColor: '#ff3b30',
   overtimeColor: '#ff3b30',
   bgColor: '#000000',
-  textColor: '#d0d0d0',
+  textColor: '#e9fdff',
   colorBackground: false,
   overtimeFlash: true,
   showOvertime: true,
@@ -50,9 +81,10 @@ const DEFAULT_SETTINGS = {
   clockSeconds: false,
   showNotes: false,
   messageColor: '#ffffff',
-  messageBg: '#1f4fd1',
+  messageBg: '#004255',
   messageSize: 6,
   messagePosition: 'bottom',
+  showLogo: false,
   mirror: false,
 };
 
@@ -513,6 +545,18 @@ const server = http.createServer(async (req, res) => {
   } catch (err) {
     sendJson(res, err.status || 400, { error: err.message || String(err) });
   }
+});
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`\nPoort ${PORT} is al in gebruik (draait Stage Timer misschien al?).`);
+    console.error(`Kies een andere poort, bv.:  node server.js ${PORT + 1}\n`);
+  } else if (err.code === 'EACCES') {
+    console.error(`\nGeen toestemming om poort ${PORT} te gebruiken. Kies een poort boven 1024, bv. 3000 of 8080.\n`);
+  } else {
+    console.error('Kon de server niet starten:', err.message);
+  }
+  process.exit(1);
 });
 
 loadState();

@@ -10,6 +10,7 @@
   if (preview) body.classList.add('preview');
 
   const el = {
+    logo: $('logo'),
     title: $('title'),
     clock: $('clock'),
     time: $('time'),
@@ -59,7 +60,8 @@
     const view = S.timerView(state, now);
     const t = view.timer;
 
-    // Titel, klok, volgende
+    // Logo, titel, klok, volgende
+    toggle(el.logo, !!s.showLogo);
     toggle(el.title, s.showTitle && !!t);
     setText(el.title, t ? t.title : '');
     toggle(el.clock, s.showClock);
@@ -142,6 +144,13 @@
   if (window.ResizeObserver) new ResizeObserver(() => fit()).observe(el.center);
 
   setInterval(render, 100);
+  // Opnieuw passend maken zodra het lettertype (Montserrat) geladen is.
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => {
+      lastLen = -1;
+      fit();
+    });
+  }
 
   // Volledig scherm & cursor verbergen
   function toggleFullscreen() {
