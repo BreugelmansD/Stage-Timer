@@ -297,7 +297,7 @@
 
       <section>
         <h4>5. Klok aanpassen</h4>
-        <p>In het tabblad <b>Weergave</b>: lettertype, dikte, grootte, notatie, kleuren (ook voor waarschuwing, bijna op en overtijd), achtergrond laten meekleuren, titel, huidige tijd, voortgangsbalk, volgend onderdeel, notities en spiegelen. Wijzigingen zie je meteen op het scherm.</p>
+        <p>In het tabblad <b>Weergave</b>: lettertype, dikte, grootte, notatie, kleuren (ook voor waarschuwing, bijna op en overtijd), achtergrond laten meekleuren, titel, huidige tijd, voortgangsbalk, volgend onderdeel, notities, het <b>BLUE MOON-logo</b> en spiegelen. Wijzigingen zie je meteen op het scherm. Met <i>Standaardweergave herstellen</i> krijg je de standaard BLUE MOON-stijl (Montserrat, petrolblauwe berichten) terug.</p>
       </section>
 
       <section>
@@ -328,6 +328,33 @@ Keynote   20 min An</pre>
           </div>
         </div>
         <p class="muted small">Bij een draaiboek is de duur de tijd tot het volgende onderdeel; het laatste onderdeel zonder eindtijd vul je zelf in (standaard 5:00). Regels zonder tijd worden notities bij het onderdeel ervoor. Oude formaten (.doc, .xls, .pdf) eerst opslaan als .docx/.xlsx of de tekst plakken.</p>
+      </section>
+
+      <section>
+        <h4>7. Zonder internet of wifi</h4>
+        <p>De app heeft <b>geen internet nodig</b>: lettertype en logo zitten in de app zelf. Er is wel een lokaal netwerk nodig tussen host en bediening:</p>
+        <ul>
+          <li><b>Netwerkkabel</b> via een switch of router (geen wifi nodig).</li>
+          <li><b>Rechtstreekse kabel</b> tussen twee laptops: na een halve minuut krijgen ze een adres als <code>169.254.x.x</code>, dat je hierboven en onder 🌐 Netwerk ziet.</li>
+          <li><b>Eigen (reis)router</b> of een <b>hotspot</b> van de host-laptop. Aanrader op events: gastennetwerken laten toestellen vaak niet met elkaar praten.</li>
+          <li>Geen netwerk? Open bediening én scherm op de host-laptop (bediening op het laptopscherm, scherm op de projector).</li>
+        </ul>
+      </section>
+
+      <section>
+        <h4>8. Poort kiezen</h4>
+        <p>Deze app draait nu op poort <b id="helpPort">…</b>. Een andere poort kies je bij het opstarten:</p>
+        <ul>
+          <li><b>Startbestand:</b> open <code>start-windows.bat</code> of <code>start-mac.command</code> in een teksteditor en pas <code>PORT=3000</code> bovenaan aan. Daar kun je ook een <code>PIN</code> (pincode voor de bediening) invullen.</li>
+          <li><b>Opdrachtregel:</b> <code>node server.js 8080</code> of <code>node server.js --port 8080 --pin 4321</code>.</li>
+          <li>Twee zalen op één laptop: <code>node server.js 3000</code> en <code>node server.js 3001 --data ./data-zaal2</code>.</li>
+        </ul>
+        <p class="muted small">Is de poort al bezet, dan meldt de app dat bij het opstarten en stelt hij een andere voor.</p>
+      </section>
+
+      <section>
+        <h4>9. Bijwerken</h4>
+        <p>Typ in de map van de app <code>git pull</code> en start de app opnieuw. Je timers en instellingen blijven bewaard.</p>
       </section>
     </div>
   </dialog>

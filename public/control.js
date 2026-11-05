@@ -555,6 +555,7 @@
     $('helpDialog').showModal();
     try {
       const info = await (await fetch('/api/info')).json();
+      $('helpPort').textContent = info.port;
       const hosts = info.addresses.length ? info.addresses : [location.hostname];
       $('helpUrls').innerHTML = hosts
         .map((h) => `<div>Scherm: <code>http://${esc(h)}:${info.port}/display</code> · Bediening: <code>http://${esc(h)}:${info.port}/</code></div>`)
