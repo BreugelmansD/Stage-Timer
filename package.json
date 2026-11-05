@@ -1,14 +1,53 @@
 {
   "name": "stage-timer",
   "version": "1.0.0",
-  "description": "Stage timer die je via het netwerk bedient: aanpasbare klok, berichten, meerdere timers en script-import.",
-  "main": "server.js",
+  "description": "Stage timer van BLUE MOON: bediening via het netwerk, aanpasbare klok, berichten, meerdere timers en script-import.",
+  "main": "electron/main.js",
   "scripts": {
     "start": "node server.js",
-    "test": "node --test test/*.test.js"
+    "test": "node --test test/*.test.js",
+    "app": "electron .",
+    "dist:mac": "electron-builder --mac --universal --publish never && codesign --force --deep --sign - \"dist/mac-universal/Stage Timer.app\""
   },
   "engines": {
     "node": ">=18"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "author": "BLUE MOON bv",
+  "devDependencies": {
+    "electron": "44.9.3",
+    "electron-builder": "26.17.0"
+  },
+  "build": {
+    "appId": "be.bluemoon.stagetimer",
+    "productName": "Stage Timer",
+    "copyright": "© BLUE MOON bv",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "server.js",
+      "lib/**",
+      "public/**",
+      "electron/**",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": [
+        {
+          "target": "dir",
+          "arch": [
+            "universal"
+          ]
+        }
+      ],
+      "identity": null,
+      "darkModeSupport": true,
+      "extendInfo": {
+        "NSLocalNetworkUsageDescription": "Stage Timer gebruikt het lokale netwerk zodat andere computers en telefoons de timer kunnen bedienen."
+      }
+    }
+  }
 }

@@ -343,8 +343,9 @@ Keynote   20 min An</pre>
 
       <section>
         <h4>8. Poort kiezen</h4>
-        <p>Deze app draait nu op poort <b id="helpPort">…</b>. Een andere poort kies je bij het opstarten:</p>
+        <p>Deze app draait nu op poort <b id="helpPort">…</b>. Een andere poort kies je zo:</p>
         <ul>
+          <li><b>Mac-app:</b> menu <i>Stage Timer → Instellingen…</i> (<kbd>⌘</kbd>+<kbd>,</kbd>). Daar stel je ook een pincode in. Is de poort bezet, dan kiest de app zelf de volgende vrije poort.</li>
           <li><b>Startbestand:</b> open <code>start-windows.bat</code> of <code>start-mac.command</code> in een teksteditor en pas <code>PORT=3000</code> bovenaan aan. Daar kun je ook een <code>PIN</code> (pincode voor de bediening) invullen.</li>
           <li><b>Opdrachtregel:</b> <code>node server.js 8080</code> of <code>node server.js --port 8080 --pin 4321</code>.</li>
           <li>Twee zalen op één laptop: <code>node server.js 3000</code> en <code>node server.js 3001 --data ./data-zaal2</code>.</li>
@@ -354,7 +355,18 @@ Keynote   20 min An</pre>
 
       <section>
         <h4>9. Bijwerken</h4>
-        <p>Typ in de map van de app <code>git pull</code> en start de app opnieuw. Je timers en instellingen blijven bewaard.</p>
+        <p><b>Mac-app:</b> <code>git pull</code>, <code>npm run dist:mac</code> en vervang de app in de map Apps. <b>Vanuit de broncode:</b> typ in de map van de app <code>git pull</code> en start opnieuw. Je timers en instellingen blijven in beide gevallen bewaard.</p>
+      </section>
+
+      <section>
+        <h4>10. De Mac-app</h4>
+        <ul>
+          <li><b>Scherm → Open scherm</b> (<kbd>⌘</kbd>+<kbd>D</kbd>) opent de klok. Is er een projector of tweede scherm aangesloten, dan komt de klok daar meteen in volledig scherm. Met <kbd>⌘</kbd>+<kbd>⇧</kbd>+<kbd>D</kbd> verplaats je hem naar het volgende beeldscherm.</li>
+          <li><b>Netwerk → Adressen…</b> (<kbd>⌘</kbd>+<kbd>N</kbd>) toont de adressen voor andere toestellen.</li>
+          <li>Zolang de klok open staat, gaat het scherm van de Mac niet in slaap.</li>
+          <li>Sluit je de vensters, dan blijft de app (en de bediening via het netwerk) actief. Echt stoppen: <kbd>⌘</kbd>+<kbd>Q</kbd>.</li>
+          <li>Vraagt macOS of Stage Timer verbindingen mag ontvangen of het lokale netwerk mag gebruiken? Kies <i>Sta toe</i>, anders kunnen andere toestellen niet verbinden.</li>
+        </ul>
       </section>
     </div>
   </dialog>

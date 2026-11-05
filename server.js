@@ -37,22 +37,12 @@ function parseArgs(argv) {
   return out;
 }
 
-const ARGS = parseArgs(process.argv.slice(2));
-if (ARGS.help) {
-  console.log(`Gebruik: node server.js [poort] [--port 3000] [--host 0.0.0.0] [--pin 1234] [--data ./data]`);
-  process.exit(0);
-}
-
-const PORT_INPUT = ARGS.port || process.env.PORT || '3000';
-const PORT = Number(PORT_INPUT);
-if (!Number.isInteger(PORT) || PORT < 1 || PORT > 65535) {
-  console.error(`Ongeldige poort: ${PORT_INPUT}. Kies een getal tussen 1 en 65535 (bv. 3000 of 8080).`);
-  process.exit(1);
-}
-const HOST = ARGS.host || process.env.HOST || '0.0.0.0';
-const PIN = ARGS.pin || process.env.STAGE_TIMER_PIN || '';
-const DATA_DIR = path.resolve(ARGS.data || process.env.DATA_DIR || path.join(__dirname, 'data'));
-const STATE_FILE = path.join(DATA_DIR, 'state.json');
+// Instellingen; worden ingevuld door start().
+let PORT = 3000;
+let HOST = '0.0.0.0';
+let PIN = '';
+let DATA_DIR = path.join(__dirname, 'data');
+let STATE_FILE = path.join(DATA_DIR, 'state.json');
 const PUBLIC_DIR = path.join(__dirname, 'public');
 const MAX_BODY = 25 * 1024 * 1024;
 
@@ -205,19 +195,23 @@ function loadState() {
 }
 
 let saveTimer = null;
+function saveNow() {
+  clearTimeout(saveTimer);
+  saveTimer = null;
+  try {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+    const tmp = STATE_FILE + '.tmp';
+    const { rev, ...data } = state;
+    fs.writeFileSync(tmp, JSON.stringify(data, null, 2));
+    fs.renameSync(tmp, STATE_FILE);
+  } catch (err) {
+    console.warn('Kon toestand niet opslaan:', err.message);
+  }
+}
+
 function persist() {
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => {
-    try {
-      fs.mkdirSync(DATA_DIR, { recursive: true });
-      const tmp = STATE_FILE + '.tmp';
-      const { rev, ...data } = state;
-      fs.writeFileSync(tmp, JSON.stringify(data, null, 2));
-      fs.renameSync(tmp, STATE_FILE);
-    } catch (err) {
-      console.warn('Kon toestand niet opslaan:', err.message);
-    }
-  }, 300);
+  saveTimer = setTimeout(saveNow, 300);
 }
 
 // --------------------------------------------------------------- realtime
@@ -241,7 +235,7 @@ function changed() {
 
 setInterval(() => {
   for (const res of clients) res.write(': ping\n\n');
-}, 15000);
+}, 15000).unref();
 
 // --------------------------------------------------------------- commands
 
@@ -417,7 +411,7 @@ setInterval(() => {
       changed();
     }
   }
-}, 200);
+}, 200).unref();
 
 // ------------------------------------------------------------------- http
 
@@ -547,34 +541,98 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.on('error', (err) => {
-  if (err.code === 'EADDRINUSE') {
-    console.error(`\nPoort ${PORT} is al in gebruik (draait Stage Timer misschien al?).`);
-    console.error(`Kies een andere poort, bv.:  node server.js ${PORT + 1}\n`);
-  } else if (err.code === 'EACCES') {
-    console.error(`\nGeen toestemming om poort ${PORT} te gebruiken. Kies een poort boven 1024, bv. 3000 of 8080.\n`);
-  } else {
-    console.error('Kon de server niet starten:', err.message);
-  }
-  process.exit(1);
-});
+/**
+ * Start de server.
+ * @param {{port?: number, host?: string, pin?: string, dataDir?: string}} options
+ * @returns {Promise<{port: number, addresses: string[]}>}
+ */
+function start(options = {}) {
+  PORT = options.port != null ? Number(options.port) : 3000;
+  HOST = options.host || '0.0.0.0';
+  PIN = options.pin ? String(options.pin) : '';
+  DATA_DIR = path.resolve(options.dataDir || path.join(__dirname, 'data'));
+  STATE_FILE = path.join(DATA_DIR, 'state.json');
+  loadState();
+  return new Promise((resolve, reject) => {
+    const onError = (err) => {
+      server.off('listening', onListening);
+      reject(err);
+    };
+    const onListening = () => {
+      server.off('error', onError);
+      PORT = server.address().port;
+      resolve({ port: PORT, addresses: lanAddresses() });
+    };
+    server.once('error', onError);
+    server.once('listening', onListening);
+    server.listen(PORT, HOST);
+  });
+}
 
-loadState();
-server.listen(PORT, HOST, () => {
-  const addrs = lanAddresses();
-  const line = '─'.repeat(60);
-  console.log(line);
-  console.log(' Stage Timer draait!');
-  console.log(line);
-  console.log(` Op deze computer:   bediening  http://localhost:${PORT}/`);
-  console.log(`                     scherm     http://localhost:${PORT}/display`);
-  for (const a of addrs) {
-    console.log(` Via het netwerk:    bediening  http://${a}:${PORT}/`);
-    console.log(`                     scherm     http://${a}:${PORT}/display`);
-  }
-  if (PIN) console.log(' Pincode voor de bediening is ingeschakeld.');
-  console.log(line);
-  console.log(' Stoppen: Ctrl+C');
-});
+/** Stop de server en bewaar de toestand meteen. */
+function stop() {
+  saveNow();
+  for (const res of clients) res.end();
+  clients.clear();
+  return new Promise((resolve) => server.close(() => resolve()));
+}
 
-module.exports = { handleCommand, makeTimer, sanitizeSettings };
+function portErrorMessage(err, port) {
+  if (err.code === 'EADDRINUSE') return `Poort ${port} is al in gebruik (draait Stage Timer misschien al?).`;
+  if (err.code === 'EACCES') return `Geen toestemming om poort ${port} te gebruiken. Kies een poort boven 1024, bv. 3000 of 8080.`;
+  return `Kon de server niet starten: ${err.message}`;
+}
+
+// ------------------------------------------------------------- opdrachtregel
+
+function cli() {
+  const args = parseArgs(process.argv.slice(2));
+  if (args.help) {
+    console.log(`Gebruik: node server.js [poort] [--port 3000] [--host 0.0.0.0] [--pin 1234] [--data ./data]`);
+    process.exit(0);
+  }
+  const portInput = args.port || process.env.PORT || '3000';
+  const port = Number(portInput);
+  if (!Number.isInteger(port) || port < 1 || port > 65535) {
+    console.error(`Ongeldige poort: ${portInput}. Kies een getal tussen 1 en 65535 (bv. 3000 of 8080).`);
+    process.exit(1);
+  }
+  start({
+    port,
+    host: args.host || process.env.HOST,
+    pin: args.pin || process.env.STAGE_TIMER_PIN,
+    dataDir: args.data || process.env.DATA_DIR,
+  }).then(
+    ({ port: p, addresses }) => {
+      const line = '─'.repeat(60);
+      console.log(line);
+      console.log(' Stage Timer draait!');
+      console.log(line);
+      console.log(` Op deze computer:   bediening  http://localhost:${p}/`);
+      console.log(`                     scherm     http://localhost:${p}/display`);
+      for (const a of addresses) {
+        console.log(` Via het netwerk:    bediening  http://${a}:${p}/`);
+        console.log(`                     scherm     http://${a}:${p}/display`);
+      }
+      if (PIN) console.log(' Pincode voor de bediening is ingeschakeld.');
+      console.log(line);
+      console.log(' Stoppen: Ctrl+C');
+    },
+    (err) => {
+      console.error(`\n${portErrorMessage(err, port)}`);
+      if (err.code === 'EADDRINUSE') console.error(`Kies een andere poort, bv.:  node server.js ${port + 1}`);
+      console.error('');
+      process.exit(1);
+    }
+  );
+  const quit = () => {
+    saveNow();
+    process.exit(0);
+  };
+  process.on('SIGINT', quit);
+  process.on('SIGTERM', quit);
+}
+
+if (require.main === module) cli();
+
+module.exports = { start, stop, portErrorMessage, lanAddresses, handleCommand, makeTimer, sanitizeSettings };

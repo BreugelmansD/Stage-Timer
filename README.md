@@ -14,7 +14,45 @@ telefoon op hetzelfde netwerk stuur je de timer aan via de browser.
 - 🔒 Optionele **pincode** voor de bediening
 - 💾 Alles wordt automatisch bewaard (ook na een herstart)
 
-Geen installatie van extra pakketten nodig: alleen [Node.js](https://nodejs.org) (versie 18 of nieuwer).
+Op de Mac gebruik je de [Mac-app](#mac-app). Op andere computers (of vanuit de broncode) heb je alleen
+[Node.js](https://nodejs.org) nodig (versie 18 of nieuwer), zonder extra pakketten.
+
+## Mac-app
+
+Stage Timer bestaat ook als gewone Mac-app (Apple Silicon én Intel, macOS 12 of nieuwer).
+Je hebt dan **geen Node.js** nodig.
+
+### Installeren
+
+1. Bouw de app op je Mac (zie [Bouwen](#bouwen) hieronder).
+2. Sleep **Stage Timer** naar **Apps**.
+3. De eerste keer openen: de app is niet bij Apple geregistreerd, dus macOS waarschuwt.
+   - Rechtsklik op Stage Timer in Apps → **Open** → **Open**, of
+   - (macOS 15 en nieuwer) probeer te openen, ga naar **Systeeminstellingen → Privacy en beveiliging**
+     en klik onderaan op **Open toch**.
+   - Alternatief in Terminal: `xattr -dr com.apple.quarantine "/Applications/Stage Timer.app"`
+4. Vraagt macOS of Stage Timer het lokale netwerk mag gebruiken of verbindingen mag ontvangen?
+   Kies **Sta toe**, anders kunnen andere toestellen niet verbinden.
+
+### Gebruiken
+
+- De bediening opent meteen in een eigen venster.
+- **Scherm → Open scherm** (⌘D) opent de klok. Is er een projector of tweede scherm aangesloten, dan
+  verschijnt de klok daar in volledig scherm. ⌘⇧D verplaatst hem naar het volgende beeldscherm.
+- **Netwerk → Adressen…** (⌘N) toont de adressen voor andere computers, tablets en telefoons.
+- **Stage Timer → Instellingen…** (⌘,): poort en pincode. Is de poort bezet, dan neemt de app de
+  volgende vrije poort en meldt dat.
+- Zolang de klok open staat gaat het scherm van de Mac niet in slaap.
+- Sluit je de vensters, dan blijft de app actief (bedienen via het netwerk blijft werken); stoppen met ⌘Q.
+- Timers en instellingen staan in `~/Library/Application Support/Stage Timer/`
+  (menu **Help → Gegevensmap tonen in Finder**).
+
+### Bouwen
+
+Op een Mac met [Node.js](https://nodejs.org), in de map van de app: `npm install` en daarna `npm run dist:mac`.
+De app staat dan in `dist/mac-universal/Stage Timer.app`; sleep hem naar Apps.
+
+Lokaal testen zonder te bouwen: `npm install` en `npm run app`.
 
 ## Starten
 
@@ -198,6 +236,8 @@ public/client.js       verbinding met de server en kloksynchronisatie
 public/control.*       bedieningspagina
 public/display.*       schermpagina
 public/brand/          logo, favicon en Montserrat (huisstijl)
+electron/              Mac-app (venster, menu, instellingen)
+build/icon.png         app-icoon
 ```
 
 De server is de enige bron van waarheid. Elke browser ontvangt de volledige toestand via
