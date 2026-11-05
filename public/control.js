@@ -549,6 +549,28 @@
   $('btnImportAppend').onclick = () => doImport(false);
   $('btnImportReplace').onclick = () => doImport(true);
 
+  // ------------------------------------------------------------ help
+
+  async function openHelp() {
+    $('helpDialog').showModal();
+    try {
+      const info = await (await fetch('/api/info')).json();
+      const hosts = info.addresses.length ? info.addresses : [location.hostname];
+      $('helpUrls').innerHTML = hosts
+        .map((h) => `<div>Scherm: <code>http://${esc(h)}:${info.port}/display</code> · Bediening: <code>http://${esc(h)}:${info.port}/</code></div>`)
+        .join('');
+    } catch {
+      $('helpUrls').textContent = 'Klik op 🌐 Netwerk om de adressen te zien.';
+    }
+  }
+  $('btnHelp').onclick = openHelp;
+  $('btnHelpClose').onclick = () => $('helpDialog').close();
+  // Toon de uitleg automatisch bij het allereerste bezoek.
+  if (!C.storage((s) => s.getItem('stageTimerHelpSeen'), '1')) {
+    C.storage((s) => s.setItem('stageTimerHelpSeen', '1'));
+    setTimeout(openHelp, 300);
+  }
+
   // ------------------------------------------------------------ netwerk
 
   $('btnNetwork').onclick = async () => {
@@ -599,6 +621,7 @@
       '=': () => send('adjust', { seconds: 60 }),
       '-': () => send('adjust', { seconds: -60 }),
       m: () => state && send('message.set', { visible: !state.message.visible }),
+      '?': () => openHelp(),
     };
     const fn = map[e.key] || map[e.key.toLowerCase()];
     if (fn) {

@@ -11,6 +11,7 @@
     <div class="brand"><span class="logo">⏱</span> Stage Timer</div>
     <span id="connStatus" class="pill off">Verbinden…</span>
     <div class="spacer"></div>
+    <button id="btnHelp" class="ghost" title="Uitleg over de app">❓ Help</button>
     <button id="btnNetwork" class="ghost" title="Adressen om te verbinden vanaf andere toestellen">🌐 Netwerk</button>
     <a id="btnOpenDisplay" class="button ghost" href="/display" target="stage-display">🖥 Scherm openen</a>
   </header>
@@ -237,6 +238,91 @@
         <button id="btnImportAppend" type="button" disabled>Toevoegen aan lijst</button>
         <button id="btnImportReplace" type="button" class="primary" disabled>Lijst vervangen</button>
       </div>
+    </div>
+  </dialog>
+
+  <!-- Help -->
+  <dialog id="helpDialog" class="wide">
+    <div class="dialog-form help">
+      <div class="row"><h3>Hoe werkt Stage Timer?</h3><div class="spacer"></div><button id="btnHelpClose" class="primary">Sluiten</button></div>
+
+      <section>
+        <h4>1. Scherm en bediening verbinden</h4>
+        <ol>
+          <li>De server draait op de <b>host</b>: de computer die aan de monitor of projector op het podium hangt.</li>
+          <li>Open op de host het <b>scherm</b>, sleep het venster naar het podiumscherm en druk op <kbd>F</kbd> (of dubbelklik) voor volledig scherm.</li>
+          <li>Open de <b>bediening</b> op een andere computer, tablet of telefoon op hetzelfde netwerk.</li>
+        </ol>
+        <div id="helpUrls" class="help-urls muted small">Adressen laden…</div>
+        <p class="muted small">Meerdere schermen en bedieningen tegelijk kan; ze lopen altijd gelijk. Kunnen andere toestellen niet verbinden? Sta Node.js toe in de firewall (Windows vraagt dit de eerste keer).</p>
+      </section>
+
+      <section>
+        <h4>2. Timers</h4>
+        <ul>
+          <li><b>＋ Nieuwe timer</b>: kies titel, soort en duur. Soorten: <i>aftellen</i>, <i>optellen</i> (stopwatch), <i>aftellen tot een tijdstip</i> (bv. tot 20:00 aanvang) of <i>huidige tijd</i>.</li>
+          <li>Per timer stel je in wanneer de klok <span class="c-warn">geel</span> (waarschuwing) en <span class="c-danger">rood</span> (bijna op) wordt, en of de volgende timer automatisch moet starten.</li>
+          <li>Klik op een timer om hem te laden, <b>▶</b> om hem meteen te starten. <b>✎</b> bewerken (of dubbelklik), <b>⧉</b> dupliceren, <b>✕</b> verwijderen, <b>↑↓</b> of slepen om te herschikken.</li>
+          <li>Na nul telt de timer negatief verder (overtijd), eventueel knipperend.</li>
+          <li><b>⤓ Exporteren</b> bewaart de lijst als bestand dat je later opnieuw kunt inladen. Alles wordt ook automatisch bewaard.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h4>3. Live bedienen</h4>
+        <ul>
+          <li><b>▶ Start / ⏸ Pauze</b>, <b>⏮</b> vorige, <b>⏭</b> volgende, <b>↺</b> reset. Bij vorige/volgende blijft de timer lopen als hij al liep.</li>
+          <li><b>−1 min … +1 min</b>: tijd bijsturen terwijl de timer loopt.</li>
+          <li><b>⬛ Blackout</b>: scherm meteen op zwart.</li>
+          <li>Notities van de actieve timer (bv. scripttekst) zie je onder het voorbeeld.</li>
+        </ul>
+        <table class="keys">
+          <tr><td><kbd>spatie</kbd></td><td>start / pauze</td><td><kbd>R</kbd></td><td>reset</td></tr>
+          <tr><td><kbd>→</kbd></td><td>volgende</td><td><kbd>←</kbd></td><td>vorige</td></tr>
+          <tr><td><kbd>+</kbd> / <kbd>-</kbd></td><td>1 minuut erbij / eraf</td><td><kbd>B</kbd></td><td>blackout</td></tr>
+          <tr><td><kbd>M</kbd></td><td>bericht tonen / verbergen</td><td><kbd>Ctrl</kbd>+<kbd>Enter</kbd></td><td>bericht versturen</td></tr>
+        </table>
+      </section>
+
+      <section>
+        <h4>4. Tekst naar het scherm</h4>
+        <p>Typ in het tabblad <b>Bericht</b> een tekst en klik <i>Tonen op scherm</i>. Snelberichten worden met één klik getoond; voeg er zelf toe of verwijder ze met ✕. Positie, kleur en grootte stel je in bij <b>Weergave</b>.</p>
+      </section>
+
+      <section>
+        <h4>5. Klok aanpassen</h4>
+        <p>In het tabblad <b>Weergave</b>: lettertype, dikte, grootte, notatie, kleuren (ook voor waarschuwing, bijna op en overtijd), achtergrond laten meekleuren, titel, huidige tijd, voortgangsbalk, volgend onderdeel, notities en spiegelen. Wijzigingen zie je meteen op het scherm.</p>
+      </section>
+
+      <section>
+        <h4>6. Script inladen</h4>
+        <p>Klik <b>📄 Script inladen</b> en kies een bestand (Word .docx, Excel .xlsx, .csv, .txt, .md of .json) of plak de tekst. Je ziet eerst een overzicht waarin je titels en tijden kunt aanpassen. Daarna kies je <i>Lijst vervangen</i> of <i>Toevoegen aan lijst</i>.</p>
+        <div class="help-examples">
+          <div>
+            <div class="label">Duur bij elk onderdeel</div>
+<pre>Welkom – 5 min
+Speech burgemeester (05:00)
+Band – 12'30"
+Pauze 15 minuten
+Prijsuitreiking 1u30</pre>
+          </div>
+          <div>
+            <div class="label">Draaiboek met starttijden</div>
+<pre>19:30 Deuren open
+20:00 Welkom
+20:05 Speech
+20:20 - 20:50 Band
+21:00 Einde</pre>
+          </div>
+          <div>
+            <div class="label">Tabel (Excel, CSV, Word)</div>
+<pre>Titel     Duur   Notities
+Opening   5:00   Jan
+Keynote   20 min An</pre>
+          </div>
+        </div>
+        <p class="muted small">Bij een draaiboek is de duur de tijd tot het volgende onderdeel; het laatste onderdeel zonder eindtijd vul je zelf in (standaard 5:00). Regels zonder tijd worden notities bij het onderdeel ervoor. Oude formaten (.doc, .xls, .pdf) eerst opslaan als .docx/.xlsx of de tekst plakken.</p>
+      </section>
     </div>
   </dialog>
 

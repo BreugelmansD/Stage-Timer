@@ -84,8 +84,10 @@ klik getoond; je kunt er zelf toevoegen of verwijderen.
 
 **Weergave**: alles aan het scherm aanpassen; wijzigingen zijn meteen zichtbaar.
 
+**❓ Help** (rechtsboven) toont deze uitleg ook in de app zelf, met de juiste netwerkadressen. Bij het eerste bezoek opent de uitleg automatisch.
+
 **Sneltoetsen** (in de bediening): `spatie` start/pauze · `→` volgende · `←` vorige · `R` reset ·
-`+`/`-` één minuut erbij/eraf · `B` blackout · `M` bericht tonen/verbergen.
+`+`/`-` één minuut erbij/eraf · `B` blackout · `M` bericht tonen/verbergen · `?` help.
 
 ## Script inladen
 

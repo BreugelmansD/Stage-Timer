@@ -258,3 +258,19 @@ summary { cursor: pointer; color: var(--muted); }
   max-width: calc(100vw - 32px);
 }
 .toast.error { background: #4a2323; }
+
+/* Help */
+.help section { border-top: 1px solid var(--line); padding-top: 10px; }
+.help h4 { margin: 0 0 6px; }
+.help p, .help ul, .help ol { margin: 6px 0; }
+.help li { margin: 3px 0; }
+.help pre { background: #0f1115; border-radius: 8px; padding: 8px 10px; margin: 0; font-size: .85rem; white-space: pre; overflow: auto; }
+.help-examples { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.help-examples .label { margin-top: 0; }
+.help-urls { display: flex; flex-direction: column; gap: 4px; background: var(--panel-2); border-radius: 8px; padding: 8px 10px; }
+.help-urls code { color: var(--text); }
+.keys { border-collapse: collapse; margin-top: 6px; font-size: .9rem; }
+.keys td { padding: 3px 12px 3px 0; }
+kbd { background: #0f1115; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; font: .85rem ui-monospace, monospace; }
+.c-warn { color: var(--warn); }
+.c-danger { color: var(--danger); }
