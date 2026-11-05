@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stage Timer – Bediening</title>
+  <link rel="stylesheet" href="control.css" />
+</head>
+<body>
+  <header class="appbar">
+    <div class="brand"><span class="logo">⏱</span> Stage Timer</div>
+    <span id="connStatus" class="pill off">Verbinden…</span>
+    <div class="spacer"></div>
+    <button id="btnNetwork" class="ghost" title="Adressen om te verbinden vanaf andere toestellen">🌐 Netwerk</button>
+    <a id="btnOpenDisplay" class="button ghost" href="/display" target="stage-display">🖥 Scherm openen</a>
+  </header>
+
+  <main class="layout">
+    <!-- LIVE -->
+    <section class="panel live">
+      <div class="panel-head"><h2>Live</h2><span id="liveIndex" class="muted"></span></div>
+      <div id="liveBox" class="live-box">
+        <div id="liveTitle" class="live-title">Geen timer geselecteerd</div>
+        <div id="liveTime" class="live-time">--:--</div>
+        <div class="live-progress"><div id="liveBar"></div></div>
+        <div id="liveNext" class="muted small"></div>
+      </div>
+
+      <div class="transport">
+        <button id="btnPrev" title="Vorige (←)">⏮</button>
+        <button id="btnToggle" class="primary big" title="Start / pauze (spatie)">▶ Start</button>
+        <button id="btnNext" title="Volgende (→)">⏭</button>
+        <button id="btnReset" title="Reset (R)">↺</button>
+      </div>
+      <div class="adjust">
+        <button data-adjust="-60">−1 min</button>
+        <button data-adjust="-10">−10 s</button>
+        <button data-adjust="10">+10 s</button>
+        <button data-adjust="60">+1 min</button>
+      </div>
+      <div class="row gap">
+        <button id="btnBlackout" class="toggle" title="Scherm op zwart (B)">⬛ Blackout</button>
+        <label class="check"><input type="checkbox" id="chkPreview" checked /> Voorbeeld</label>
+      </div>
+
+      <div id="previewWrap" class="preview-wrap">
+        <iframe id="preview" title="Voorbeeld van het scherm" tabindex="-1"></iframe>
+      </div>
+
+      <div id="liveNotesWrap" class="notes-box hidden">
+        <div class="label">Notities</div>
+        <div id="liveNotes"></div>
+      </div>
+    </section>
+
+    <!-- TIMERS -->
+    <section class="panel rundown">
+      <div class="panel-head">
+        <h2>Timers</h2>
+        <span id="totalTime" class="muted"></span>
+      </div>
+      <div class="toolbar">
+        <button id="btnAdd" class="primary">＋ Nieuwe timer</button>
+        <button id="btnImport">📄 Script inladen</button>
+        <button id="btnExport" title="Lijst opslaan als bestand">⤓ Exporteren</button>
+        <button id="btnClear" class="danger-ghost" title="Alle timers verwijderen">Wissen</button>
+      </div>
+      <ol id="timerList" class="timer-list"></ol>
+      <p id="emptyList" class="muted empty hidden">Nog geen timers. Voeg er een toe of laad een script in.</p>
+    </section>
+
+    <!-- BERICHT / WEERGAVE -->
+    <section class="panel side">
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-tab="message">Bericht</button>
+        <button class="tab" data-tab="look">Weergave</button>
+      </div>
+
+      <div class="tab-page" id="tab-message">
+        <label class="label" for="msgText">Tekst naar het scherm</label>
+        <textarea id="msgText" rows="3" maxlength="500" placeholder="Bv. Nog 5 minuten"></textarea>
+        <div class="row gap wrap">
+          <button id="btnMsgShow" class="primary">Tonen op scherm</button>
+          <button id="btnMsgHide">Verbergen</button>
+          <label class="check"><input type="checkbox" id="msgFlash" /> Knipperen</label>
+        </div>
+        <div id="msgLive" class="msg-live hidden">
+          <span class="dot"></span> Op scherm: <b id="msgLiveText"></b>
+        </div>
+        <div class="label">Snelle berichten <span class="muted">(klik = meteen tonen)</span></div>
+        <div id="presets" class="presets"></div>
+        <form id="presetForm" class="row gap">
+          <input id="presetInput" placeholder="Eigen snelbericht toevoegen…" maxlength="120" />
+          <button type="submit">＋</button>
+        </form>
+      </div>
+
+      <div class="tab-page hidden" id="tab-look">
+        <form id="settingsForm" class="settings" autocomplete="off">
+          <fieldset>
+            <legend>Klok</legend>
+            <label>Lettertype
+              <select name="fontFamily">
+                <option value='system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif'>Systeem (sans-serif)</option>
+                <option value='"Helvetica Neue", Helvetica, Arial, sans-serif'>Helvetica / Arial</option>
+                <option value='"DIN Alternate", "Bahnschrift", "Arial Narrow", sans-serif'>DIN / Bahnschrift</option>
+                <option value='"SF Mono", Menlo, Consolas, "Liberation Mono", monospace'>Monospace</option>
+                <option value='Georgia, "Times New Roman", serif'>Serif</option>
+                <option value='Impact, "Arial Black", sans-serif'>Impact</option>
+                <option value='"Courier New", Courier, monospace'>Courier</option>
+              </select>
+            </label>
+            <label>Eigen lettertype <input name="customFont" placeholder="Naam van geïnstalleerd lettertype" /></label>
+            <label>Dikte
+              <select name="fontWeight">
+                <option value="300">Dun</option>
+                <option value="400">Normaal</option>
+                <option value="600">Halfvet</option>
+                <option value="700">Vet</option>
+                <option value="900">Extra vet</option>
+              </select>
+            </label>
+            <label>Grootte <input type="range" name="timerSize" min="5" max="60" step="1" /></label>
+            <label>Notatie
+              <select name="timerFormat">
+                <option value="auto">Automatisch (mm:ss of u:mm:ss)</option>
+                <option value="hms">uu:mm:ss</option>
+                <option value="ms">mm:ss</option>
+                <option value="m">Alleen minuten</option>
+              </select>
+            </label>
+          </fieldset>
+          <fieldset>
+            <legend>Kleuren</legend>
+            <div class="colors">
+              <label>Klok <input type="color" name="timerColor" /></label>
+              <label>Achtergrond <input type="color" name="bgColor" /></label>
+              <label>Waarschuwing <input type="color" name="warningColor" /></label>
+              <label>Bijna op <input type="color" name="dangerColor" /></label>
+              <label>Overtijd <input type="color" name="overtimeColor" /></label>
+              <label>Tekst <input type="color" name="textColor" /></label>
+            </div>
+            <label class="check"><input type="checkbox" name="colorBackground" /> Achtergrond kleurt mee (i.p.v. de cijfers)</label>
+          </fieldset>
+          <fieldset>
+            <legend>Tonen</legend>
+            <label class="check"><input type="checkbox" name="showTitle" /> Titel van de timer</label>
+            <label>Grootte titel <input type="range" name="titleSize" min="1" max="12" step="0.5" /></label>
+            <label class="check"><input type="checkbox" name="showClock" /> Huidige tijd</label>
+            <label class="check"><input type="checkbox" name="clockSeconds" /> … met seconden</label>
+            <label class="check"><input type="checkbox" name="showProgress" /> Voortgangsbalk</label>
+            <label class="check"><input type="checkbox" name="showNext" /> Volgende onderdeel</label>
+            <label class="check"><input type="checkbox" name="showNotes" /> Notities van de timer</label>
+            <label class="check"><input type="checkbox" name="showOvertime" /> Overtijd tonen (negatief verder tellen)</label>
+            <label class="check"><input type="checkbox" name="overtimeFlash" /> Knipperen bij overtijd</label>
+            <label class="check"><input type="checkbox" name="mirror" /> Spiegelen (voor reflectie/teleprompter)</label>
+          </fieldset>
+          <fieldset>
+            <legend>Berichten</legend>
+            <div class="colors">
+              <label>Tekst <input type="color" name="messageColor" /></label>
+              <label>Achtergrond <input type="color" name="messageBg" /></label>
+            </div>
+            <label>Grootte <input type="range" name="messageSize" min="2" max="20" step="0.5" /></label>
+            <label>Positie
+              <select name="messagePosition">
+                <option value="bottom">Onderaan</option>
+                <option value="top">Bovenaan</option>
+                <option value="center">Groot in het midden</option>
+              </select>
+            </label>
+          </fieldset>
+          <button type="button" id="btnResetSettings" class="danger-ghost">Standaardweergave herstellen</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- Timer bewerken -->
+  <dialog id="timerDialog">
+    <form method="dialog" id="timerForm" class="dialog-form">
+      <h3 id="timerDialogTitle">Timer</h3>
+      <label>Titel <input name="title" required maxlength="200" /></label>
+      <label>Soort
+        <select name="mode">
+          <option value="countdown">Aftellen</option>
+          <option value="countup">Optellen (stopwatch)</option>
+          <option value="target">Aftellen tot een tijdstip</option>
+          <option value="clock">Huidige tijd tonen</option>
+        </select>
+      </label>
+      <label data-for="countdown countup target">Duur <input name="duration" placeholder="bv. 5:00, 5 min, 1u30" /></label>
+      <label data-for="target">Tijdstip <input name="target" type="time" step="1" /></label>
+      <div class="row gap" data-for="countdown countup target">
+        <label>Waarschuwing bij <input name="warning" placeholder="1:00" /></label>
+        <label>Bijna op bij <input name="danger" placeholder="0:15" /></label>
+      </div>
+      <label class="check" data-for="countdown countup"><input type="checkbox" name="autoNext" /> Automatisch de volgende timer starten als de tijd op is</label>
+      <label>Starttijd in draaiboek <input name="startTime" placeholder="bv. 20:15" maxlength="8" /></label>
+      <label>Notities <textarea name="notes" rows="4" maxlength="5000"></textarea></label>
+      <p class="muted small" id="modeHelp"></p>
+      <div class="row gap end">
+        <button value="cancel" formnovalidate>Annuleren</button>
+        <button value="save" class="primary">Opslaan</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Script importeren -->
+  <dialog id="importDialog" class="wide">
+    <div class="dialog-form">
+      <h3>Script inladen</h3>
+      <p class="muted small">
+        Ondersteund: Word (.docx), Excel (.xlsx), .csv, .txt, .md en .json. De app zoekt tijden zoals
+        <code>Welkom – 5 min</code>, <code>Intro (03:30)</code>, <code>20:00 Welkom</code> of
+        <code>20:00-20:15 Band</code>, of kolommen als <i>Titel</i> en <i>Duur</i>.
+      </p>
+      <div id="dropZone" class="drop-zone">
+        <input type="file" id="fileInput" accept=".docx,.xlsx,.xlsm,.csv,.tsv,.txt,.md,.json,text/plain" />
+        <div>Sleep een bestand hierheen of <label for="fileInput" class="link">kies een bestand</label></div>
+        <div id="fileName" class="muted small"></div>
+      </div>
+      <details>
+        <summary>…of plak de tekst van het script</summary>
+        <textarea id="pasteText" rows="6" placeholder="Plak hier je script of draaiboek"></textarea>
+        <button id="btnParsePaste" type="button">Analyseren</button>
+      </details>
+      <div id="importInfo" class="muted small"></div>
+      <div id="importTableWrap" class="import-table-wrap hidden">
+        <table class="import-table">
+          <thead><tr><th><input type="checkbox" id="importAll" checked /></th><th>Start</th><th>Titel</th><th>Duur</th><th>Notities</th></tr></thead>
+          <tbody id="importRows"></tbody>
+        </table>
+      </div>
+      <div class="row gap end">
+        <button id="btnImportCancel" type="button">Annuleren</button>
+        <button id="btnImportAppend" type="button" disabled>Toevoegen aan lijst</button>
+        <button id="btnImportReplace" type="button" class="primary" disabled>Lijst vervangen</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Netwerk -->
+  <dialog id="networkDialog">
+    <div class="dialog-form">
+      <h3>Verbinden vanaf een andere computer</h3>
+      <p class="muted small">Zorg dat de toestellen op hetzelfde netwerk zitten en open één van deze adressen in een browser.</p>
+      <div id="networkList"></div>
+      <div class="row end"><button id="btnNetworkClose" class="primary">Sluiten</button></div>
+    </div>
+  </dialog>
+
+  <!-- Pincode -->
+  <dialog id="pinDialog">
+    <form method="dialog" class="dialog-form" id="pinForm">
+      <h3>Pincode</h3>
+      <p class="muted small">De bediening is beveiligd met een pincode.</p>
+      <input id="pinInput" type="password" inputmode="numeric" autocomplete="current-password" />
+      <p id="pinError" class="error small hidden">Onjuiste pincode</p>
+      <div class="row gap end">
+        <button value="cancel" formnovalidate>Annuleren</button>
+        <button value="ok" class="primary">OK</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="shared.js"></script>
+  <script src="client.js"></script>
+  <script src="control.js"></script>
+</body>
+</html>

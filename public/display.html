@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stage Timer – Scherm</title>
+  <link rel="stylesheet" href="display.css" />
+</head>
+<body>
+  <div id="stage">
+    <div id="topbar">
+      <div id="title"></div>
+      <div id="clock"></div>
+    </div>
+    <div id="center">
+      <div id="time">--:--</div>
+      <div id="notes"></div>
+    </div>
+    <div id="progress"><div id="bar"></div></div>
+    <div id="next"></div>
+    <div id="message"><span id="messageText"></span></div>
+  </div>
+  <div id="blackout"></div>
+  <div id="conn" title="Verbinding met de bediening verbroken"></div>
+  <div id="hint">Dubbelklik of druk <b>F</b> voor volledig scherm</div>
+  <script src="shared.js"></script>
+  <script src="client.js"></script>
+  <script src="display.js"></script>
+</body>
+</html>
