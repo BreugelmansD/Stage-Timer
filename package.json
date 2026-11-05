@@ -48,6 +48,7 @@
       "extendInfo": {
         "NSLocalNetworkUsageDescription": "Stage Timer gebruikt het lokale netwerk zodat andere computers en telefoons de timer kunnen bedienen."
       }
-    }
+    },
+    "publish": null
   }
 }
