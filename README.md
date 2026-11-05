@@ -24,8 +24,10 @@ Je hebt dan **geen Node.js** nodig.
 
 ### Installeren
 
-1. Bouw de app op je Mac (zie [Bouwen](#bouwen) hieronder).
-2. Sleep **Stage Timer** naar **Apps**.
+1. Download `Stage-Timer-mac.dmg`: op GitHub onder **Actions → Mac-app bouwen** → de laatste run →
+   *Artifacts* (of onder **Releases** als er een versie uitgebracht is). Je kunt de app ook zelf
+   bouwen, zie [Bouwen](#bouwen).
+2. Open de .dmg en sleep **Stage Timer** naar **Apps**.
 3. De eerste keer openen: de app is niet bij Apple geregistreerd, dus macOS waarschuwt.
    - Rechtsklik op Stage Timer in Apps → **Open** → **Open**, of
    - (macOS 15 en nieuwer) probeer te openen, ga naar **Systeeminstellingen → Privacy en beveiliging**
@@ -48,6 +50,13 @@ Je hebt dan **geen Node.js** nodig.
   (menu **Help → Gegevensmap tonen in Finder**).
 
 ### Bouwen
+
+De .dmg wordt gebouwd door GitHub Actions op een Mac (workflow `.github/workflows/mac-app.yml`):
+
+- **Handmatig:** tabblad **Actions → Mac-app bouwen → Run workflow**. De .dmg staat daarna bij de run
+  onder *Artifacts* (30 dagen bewaard).
+- **Als release:** verhoog `version` in `package.json`, maak een tag (bv. `git tag v1.1.0 && git push --tags`);
+  de .dmg komt dan bij **Releases**.
 
 Op een Mac met [Node.js](https://nodejs.org), in de map van de app: `npm install` en daarna `npm run dist:mac`.
 De app staat dan in `dist/mac-universal/Stage Timer.app`; sleep hem naar Apps.
